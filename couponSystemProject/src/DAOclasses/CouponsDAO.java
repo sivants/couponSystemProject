@@ -10,6 +10,8 @@ public interface CouponsDAO {
 	public int addCoupon(Coupon coupon) throws CouponSystemException;
 	
 	public void updateCoupon(Coupon coupon) throws CouponSystemException;
+	
+	public void subtructCouponAmount(Coupon coupon) throws CouponSystemException;
 
 	public void deleteCoupon(int couponId) throws CouponSystemException;
 
@@ -30,7 +32,7 @@ public interface CouponsDAO {
 	public void addCouponPurchase (int customerId, int couponId) throws CouponSystemException;
 	
 	public void deleteCouponPurchase(int customerId, int couponId) throws CouponSystemException;
-
+	
 	public void deleteCouponPurchaseByCustomer(int customerId) throws CouponSystemException;
 
 	public void deleteCouponPurchaseById(int couponId) throws CouponSystemException;

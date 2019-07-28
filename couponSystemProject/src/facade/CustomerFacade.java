@@ -43,37 +43,56 @@ public class CustomerFacade extends ClientFacade{
 	
 	public void purchaseCoupon(Coupon coupon) throws CouponSystemException {
 		Date now = new Date();
+		boolean isPurchased = false;
 		Collection<Coupon> customerCoupons = couponsDAO.getCustomerCoupons(customerId);
-		if (coupon.getAmount() != 0 && now.before(coupon.getEndDate())) 
+		if (coupon.getAmount() != 0 && now.before(coupon.getEndDate())) {
 			for (Coupon coupon2 : customerCoupons) {
-				if (!coupon2.equals(coupon)) {
-					couponsDAO.addCouponPurchase(customerId, coupon.getId());
-					coupon.setAmount(coupon.getAmount()-1);
+				if (coupon2.equals(coupon)) {
+					isPurchased = true;
+					System.out.println("coupon allready purchased");
+					break;
+			    }
+		    }
+			if (!isPurchased) {
+				couponsDAO.addCouponPurchase(customerId, coupon.getId());
+				couponsDAO.subtructCouponAmount(couponsDAO.getOneCoupon(coupon.getId()));
 			}
+		}else {
+			System.out.println("coupon ia out of stock or not valid");
 		}
-	}
+    }
+	
 	public void purchaseCoupon(int couponId) throws CouponSystemException {
 		Date now = new Date();
+		boolean isPurchased = false;
 		Coupon coupon = couponsDAO.getOneCoupon(couponId);
 		Collection<Coupon> customerCoupons = couponsDAO.getCustomerCoupons(customerId);
-		if (coupon.getAmount() != 0 && now.before(coupon.getEndDate())) 
-			for (Coupon coupon2 : customerCoupons) {
-				if (!coupon2.equals(coupon)) {
-					couponsDAO.addCouponPurchase(customerId, coupon.getId());
-					coupon.setAmount(coupon.getAmount()-1);
+			if (coupon.getAmount() != 0 && now.before(coupon.getEndDate())) { 
+				for (Coupon coupon2 : customerCoupons) {
+					if (coupon2.equals(coupon)) {
+						isPurchased = true;
+						System.out.println("coupon allready purchased");
+						break;		
+					}
 				}
+				if(!isPurchased) {
+					couponsDAO.addCouponPurchase(customerId, couponId);
+					couponsDAO.subtructCouponAmount(couponsDAO.getOneCoupon(couponId));
+				}
+			}else {
+				System.out.println("coupon ia out of stock or not valid");
 			}
-	}
+	}		
 		
 	public Collection<Coupon> getCustomerCoupons() throws CouponSystemException {
 		return couponsDAO.getCustomerCoupons(customerId);
 	}
 
 	public Collection<Coupon> getCustomerCoupons(Category category) throws CouponSystemException {
-		Collection<Coupon> customerCoupons = couponsDAO.getCompanyCoupons(customerId);
+		Collection<Coupon> customerCoupons = couponsDAO.getCustomerCoupons(customerId);
 		Collection<Coupon> categoryCoupons = new ArrayList<Coupon>();
 		for (Coupon coupon : customerCoupons) {
-			if (coupon.getCategory() == category) {
+			if (coupon.getCategoryId() == category.ordinal()) {
 				categoryCoupons.add(coupon);
 			}
 		}
@@ -81,7 +100,7 @@ public class CustomerFacade extends ClientFacade{
 	}
 	
 	public Collection<Coupon> getCustomerCoupons(double maxPrice) throws CouponSystemException{
-		Collection<Coupon> customerCoupons = couponsDAO.getCompanyCoupons(customerId);
+		Collection<Coupon> customerCoupons = couponsDAO.getCustomerCoupons(customerId);
 		Collection<Coupon> maxPriceCoupons = new ArrayList<Coupon>();
 		for (Coupon coupon : customerCoupons) {
 			if (coupon.getPrice() < maxPrice || coupon.getPrice() == maxPrice) {

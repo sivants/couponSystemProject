@@ -11,6 +11,10 @@ public class CouponExpirationDailyJob implements Runnable {
 
 	private boolean quit;
 	private CouponsDAO couponsDAO = new CouponsDbDAO();
+	public void setTaskThread(Thread taskThread) {
+		this.taskThread = taskThread;
+	}
+
 	private Thread taskThread;
 	
 	public CouponExpirationDailyJob() {
@@ -35,7 +39,6 @@ public class CouponExpirationDailyJob implements Runnable {
 				System.out.println("daily job not working");
 				e.printStackTrace();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				break;
 			}
 		}

@@ -2,11 +2,8 @@ package facade;
 
 import DAOclasses.CouponsDAO;
 import DAOclasses.CouponsDbDAO;
-import DAOclasses.CustomersDAO;
-import DAOclasses.CustomersDbDAO;
 import beans.Category;
 import beans.Coupon;
-import beans.Customer;
 import exceptions.CouponSystemException;
 import tasks.LoginManager;
 
@@ -15,38 +12,36 @@ public class FacadeTest3 {
 	
 			LoginManager logM = LoginManager.getInstance();
 			CouponsDAO couponDAO = new CouponsDbDAO();
-			CustomersDAO customerDAO = new CustomersDbDAO();
 			
 			try {
 				Coupon coupon = new Coupon();
-				coupon.setAmount(700);
+				coupon.setAmount(300);
 				coupon.setCategory(Category.FOOD);
 				coupon.setCompanyId(2);
 				coupon.setDescription(null);
-				coupon.setEndDate(java.sql.Date.valueOf("2019-04-16"));
+				coupon.setEndDate(java.sql.Date.valueOf("2019-12-20"));
 				coupon.setStartDate(null);
-				coupon.setImage(null);
-				coupon.setPrice(8.00);
-				coupon.setTittle("1+1 free");
+				coupon.setImage("image2");
+				coupon.setPrice(13.00);
+				coupon.setTittle("test2");
 				int couponId = couponDAO.addCoupon(coupon);
 				coupon.setId(couponId);
 				
-				Customer customer = new Customer("Mali", "Cohen", "mali@", "1122");
-				int customerId = customerDAO.addCustomer(customer);
-				customer.setId(customerId);
+//				Customer customer = new Customer("Mali", "Cohen", "mali@", "1122");
+//				int customerId = customerDAO.addCustomer(customer);
+//				customer.setId(customerId);
 				
 				//couponDAO.addCouponPurchase(207, 202);
 				CustomerFacade cusFacade = (CustomerFacade) logM.login("mali@", "1122", ClientType.CUSTOMER);
 				System.out.println(cusFacade.getCustomerDetails());
 				System.out.println(cusFacade.getCustomerCoupons());
-				//cusFacade.purchaseCoupon(203);
+				cusFacade.purchaseCoupon(couponId);
 				System.out.println(cusFacade.getCustomerCoupons());
-				System.out.println(cusFacade.getCustomerCoupons(Category.VACATION));
+				System.out.println(cusFacade.getCustomerCoupons(Category.FOOD));
 				System.out.println(cusFacade.getCustomerCoupons(100));
 				
-				couponDAO.deleteCouponPurchase(206, 203);
-				couponDAO.deleteCoupon(209);
-				customerDAO.deleteCustomer(206);
+			//	couponDAO.deleteCouponPurchase(206, couponId);
+				//couponDAO.deleteCoupon(couponId);
 			} catch (CouponSystemException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

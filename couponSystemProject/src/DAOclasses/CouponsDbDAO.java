@@ -300,7 +300,22 @@ public class CouponsDbDAO implements CouponsDAO {
 				ConnectionPool.getInstance().restoreConnection(con);
 			}
 		}
-			
+		@Override
+		public void subtructCouponAmount(Coupon coupon) throws CouponSystemException {
+			String sql = "UPDATE coupons set amount=?  WHERE id=?";
+			Connection con = ConnectionPool.getInstance().getConnection();
+			try (PreparedStatement pstmt = con.prepareStatement(sql);) {
+				pstmt.setInt(1, coupon.getAmount()-1);
+				pstmt.setInt(2, coupon.getId());
+				pstmt.executeUpdate();
+				coupon.setAmount(coupon.getAmount()-1);
+			} catch (SQLException e) {
+				throw new CouponSystemException("updateCoupon failed", e);
+			}finally {
+				ConnectionPool.getInstance().restoreConnection(con);
+			}
+		}
+
 }	
 	
 

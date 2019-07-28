@@ -40,19 +40,21 @@ public class CompanyFacade extends ClientFacade {
 		this.companyId = companyId;
 	}
 
-	public void addCoupon(Coupon coupon) throws CouponSystemException {
+	public int addCoupon(Coupon coupon) throws CouponSystemException {
 		Collection<Coupon> allCompanyCoupons = new ArrayList<Coupon>(couponsDAO.getCompanyCoupons(coupon.getCompanyId()));
-		boolean isCouponExists = false;
+		boolean isExist = false;
 		for (Coupon coupon2 : allCompanyCoupons) {
 			if (coupon2.getTittle().equals(coupon.getTittle())){
-				isCouponExists = true;
+				isExist = true;
 				System.out.println("CouponTittle allready exists");
-			}if (!isCouponExists) {
-				couponsDAO.addCoupon(coupon);
-			}
+				break;
+			} 
+		}if (!isExist) {
+			return couponsDAO.addCoupon(coupon);
 		}
+		return 0;
 	}
-	
+		
 	public void updateCoupon(Coupon coupon) throws CouponSystemException {
 		Coupon coupon1 = couponsDAO.getOneCoupon(coupon.getId());
 		if (coupon1.getId() == coupon.getId() && coupon1.getCompanyId() == coupon.getCompanyId()) {
@@ -62,12 +64,17 @@ public class CompanyFacade extends ClientFacade {
 		}
 	}
 	
+	public Coupon getOneCoupon(int couponId) throws CouponSystemException {
+		Coupon coupon = couponsDAO.getOneCoupon(couponId);
+		return coupon;
+	}
+
 	public void deleteCoupon(int couponId) throws CouponSystemException {
 		couponsDAO.deleteCouponPurchaseById(couponId);
 		couponsDAO.deleteCoupon(couponId);
 	}
 	
-	public Collection<Coupon> getCompanyCoupons(int companyId) throws CouponSystemException{
+	public Collection<Coupon> getCompanyCoupons() throws CouponSystemException{
 		return couponsDAO.getCompanyCoupons(companyId);
 	}
 	
@@ -95,6 +102,4 @@ public class CompanyFacade extends ClientFacade {
 	public Company getCompanyDetails(int companyId) throws CouponSystemException {
 		return this.companiesDAO.getOneCompany(companyId);
 	}
-	
-	
 }
